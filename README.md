@@ -1,2 +1,3 @@
-Safari
+Pokemon Safari Game
 ======
+~Unfinished~
