@@ -1,0 +1,210 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+int randomNumber();
+int menu(int balls);
+int pokeCatch(int catchChance);
+int pokeFlee(int fleeChance);
+int pokeGenerator();
+
+int main()
+{   //Declare and initialize variables
+    int playerAction = 0;
+    int safariBalls = 25;
+    int catchRate = 0;
+    int fleeRate = 0; 
+    int pokemon = 0;
+    int caught = 0;
+    int fled = 0;
+    int eating = 0;
+    int angry = 0;
+    char* pokeName  = {0};
+    
+    while (safariBalls > 0) //while loop to play as long as you have safari balls
+    {
+        fled = 0;
+        caught = 0;
+        pokemon = pokeGenerator(); //generates a random number to see which pokemon appears, will refine later
+        
+        switch (pokemon)
+        {
+            case 1://Very lazy method, replace with strings and ints later
+                printf("A wild Scyther appeared!\n");
+                catchRate = 20;
+                fleeRate = 35;
+                break;
+            case 2:
+                printf("A wild Chansey appeared!\n");
+                catchRate = 25;
+                fleeRate = 35;
+                break;
+            case 3:
+                printf("A wild Tauros appeared!\n");
+                catchRate = 30;
+                fleeRate = 35;
+                break;
+            case 4:
+                printf("A wild Nidorino appeared!\n");
+                catchRate = 40;
+                fleeRate = 30;
+                break;
+             case 5:
+                printf("A wild Pinsir appeared!\n");
+                catchRate = 30;
+                fleeRate = 35;
+                break;
+             case 6:
+                printf("A wild Paras appeared!\n");
+                catchRate = 50;
+                fleeRate = 15;
+                break;
+             case 7:
+                printf("A wild Paras appeared!\n");
+                catchRate = 50;
+                fleeRate = 15;
+                break;
+             default:
+                printf("A wild Doduo apeared!\n");
+                catchRate = 60;
+                fleeRate = 15;
+                break; 
+        }
+        while ((caught == 0) && (safariBalls > 0) && (fled == 0)) //battle loop
+        {
+            if (eating == 1)
+                printf("Wild pokemon is eating!\n\n");
+            else if (angry == 1)
+                printf("Wild pokemon is angry!\n\n");
+        
+            playerAction = menu(safariBalls);//calls menu to show player allowed moves
+            
+            switch (playerAction) //different possibilities depending on players menu input
+            {
+                case 1:
+                    safariBalls = safariBalls - 1;
+                    caught = pokeCatch(catchRate);//Calls on pokeCatch function to determine if pokemon fled/was caught
+                    if (caught == 0)
+                    {
+                        fled = pokeFlee(fleeRate);//WHY DON'T YOU FUCKING WORK FUCK CUNT WHORE ASS
+                    }
+                    break;
+                case 2:
+                    fled = pokeFlee(fleeRate);
+                    if (eating == 0)//makes sure the status doesn't stack
+                    { 
+                        fleeRate = fleeRate * 1.5;//Changes flee rate/catch rate accordingly
+                        catchRate = catchRate / 1.5;
+                        eating = 1;//sets eating status
+                        angry = 0;
+                    }
+                    break;
+                case 3:
+                    fled = pokeFlee(fleeRate);
+                    if (angry == 0);//same as above
+                    {
+                        fleeRate = fleeRate * 1.5;
+                        catchRate = catchRate / 1.5;
+                        eating = 0;
+                        angry = 1;
+                    }
+                    break;
+                case 4: 
+                    caught = 1;//Fleeing from battle like a bitch
+                    printf("You fled the battle!\n\n");
+                    break;
+                
+            }
+        }
+        caught = 0, eating = 0, angry = 0;//resets all the statuses before next battle
+    }
+    printf("You've run out of Safari balls!\n");    
+    return 0;
+}
+
+/*************
+Menu to decide player actions
+Recieves amount of safari balls remaining
+Outputs the players choice
+*************/
+int menu(balls)
+{
+    int userChoice = 0;
+    char choice[2] = {0};
+    do
+    { 
+        printf("Enter '1' to throw a safari ball (%d), '2' to throw bait, '3' for rock or '4' to flee: ", balls);
+        fgets(choice,2,stdin);//takes in a string and converts it to an int
+        getchar();
+        userChoice = atoi(choice);//Add in a proper error message for invalid input at some point
+    }   while ((userChoice < 1) || (userChoice > 4));
+    
+    return userChoice;
+}
+
+/****************
+Generates a random number between 1 and 10
+Returns it to whatever function asked
+****************/
+int randomNumber()
+{
+    int x = 0;
+    srand(time(NULL));
+    x = (rand() %100) + 1;
+    return x;
+}
+
+/***************
+Generates a random number between 1 and 10
+Selects pokemon based off that
+***************/
+int pokeGenerator()
+{   
+    int x = 0;
+    srand(time(NULL));
+    x = (rand() %10) +1;
+    return x;
+}
+
+/*************
+Decides whether the pokemon was caught, fled or neither
+Returns the status
+*************/
+int pokeCatch(catchChance)
+{
+    int caught = 0;
+    int number = 0;
+    
+    number = randomNumber();
+    
+    if (number <=  catchChance)
+    {
+        printf("Wild pokemon was caught!\n\n");
+        caught = 1;
+    }
+    else
+    {
+        printf("The wild pokemon broke free!\n\n");
+    }    
+    return caught;
+}
+
+/************
+Decides whether the pokemon fled
+************/
+int pokeFlee(fleeChance)
+{
+    int ran = 0;
+    int number = 0;
+    
+    number = randomNumber();
+    printf("\n\nThe generated flee number is %d\n\n", number);
+    if (number <= fleeChance)
+    {
+        printf("Wild pokemon ran!\n\n");
+        ran = 1;
+    }
+    return ran;
+}
+        
